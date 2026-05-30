@@ -1,19 +1,22 @@
 import { NextResponse } from "next/server"
-import Stripe from "stripe"
-import payload from "payload"
+import { getPayload } from "payload"
+import configPromise from "@payload-config"
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: "2026-03-25.dahlia",
-})
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   try {
-    const { productId } = await req.json()
+    const { productId, email } = await req.json()
 
     if (!productId) {
       return NextResponse.json({ error: "Product ID required" }, { status: 400 })
     }
 
+    if (!email) {
+      return NextResponse.json({ error: "Email required" }, { status: 400 })
+    }
+
+    const payload = await getPayload({ config: configPromise })
     const product = await payload.findByID({
       collection: "products",
       id: productId,
@@ -23,34 +26,40 @@ export async function POST(req: Request) {
       return NextResponse.json({ error: "Invalid product" }, { status: 400 })
     }
 
-    const session = await stripe.checkout.sessions.create({
-      mode: "payment",
-      payment_method_types: ["card"],
-      line_items: [
-        {
-          price_data: {
-            currency: product.currency.toLowerCase(),
-            product_data: {
-              name: product.title,
-              description: product.shortDescription,
-            },
-            unit_amount: product.price * 100,
-          },
-          quantity: 1,
-        },
-      ],
-      metadata: {
-        productId: String(product.id),
-        productTitle: product.title,
-        productType: product.type,
+    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+
+    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
       },
-      success_url: `${process.env.NEXT_PUBLIC_APP_URL}/mentorship/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${process.env.NEXT_PUBLIC_APP_URL}/shop/${product.slug}`,
+      body: JSON.stringify({
+        email,
+        amount: Math.round(product.price * 100),
+        currency: product.currency ? product.currency.toUpperCase() : undefined,
+        callback_url: `${siteUrl}/mentorship/success`,
+        metadata: {
+          productId: String(product.id),
+          productTitle: product.title,
+          productType: product.type,
+        },
+      }),
     })
 
-    return NextResponse.json({ url: session.url })
+    const paystackData = await paystackRes.json()
+
+    if (!paystackData.status) {
+      console.error('Paystack initialization error:', paystackData)
+      return NextResponse.json(
+        { error: paystackData.message || 'Payment initialization failed' },
+        { status: 400 },
+      )
+    }
+
+    return NextResponse.json({ url: paystackData.data.authorization_url })
   } catch (error) {
-    console.error("Stripe Error:", error)
+    console.error("Paystack Error:", error)
     return NextResponse.json({ error: "Something went wrong" }, { status: 500 })
   }
 }

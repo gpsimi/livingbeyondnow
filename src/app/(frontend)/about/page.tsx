@@ -1,15 +1,13 @@
-import Layout from '@/components/frontend/layout/Layout'
-import { AboutHero, AboutBody, AboutConviction, AboutMission, AboutVision, OurTeam } from '@/components/frontend/pages/about'
+import { AboutHero, VisionMission, CoreValues, MovementStatement } from "@/components/frontend/pages/about";
 
-export default function About() {
-  return (
-    <Layout>
-      <AboutHero />
-      <AboutBody />
-      <AboutVision />
-      <AboutMission />
-      <OurTeam />
-      <AboutConviction />
-    </Layout>
-  )
-}
+
+const About = () => (
+  <main className="">
+    <AboutHero />
+    <VisionMission />
+    <CoreValues />
+    <MovementStatement />
+  </main>
+);
+
+export default About;

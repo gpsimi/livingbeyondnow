@@ -1,125 +1,54 @@
-import Image from "next/image";
 import Link from "next/link";
-import logoLight from "@/assets/logos/logo-light.svg";
-import { FaInstagram, FaYoutube, FaTiktok, } from 'react-icons/fa'
-import { CONTACT_INFO, footerLinks } from "@/constants";
 
 const Footer = () => {
   return (
-    <footer className="gradient-navy text-primary-foreground">
-      <div className="container-narrow section-padding">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-12">
+    <footer className="bg-secondary text-secondary-foreground">
+      <div className="container-narrow py-16">
+        <div className="grid grid-cols-1 md:grid-cols-4 gap-10">
           {/* Brand */}
-          <div className="md:col-span-2">
-            < Link href="/" className="inline-block mb-3">
-              <Image
-                src={logoLight}
-                alt="Prime Counsel"
-                className="h-8 md:h-10 w-auto"
-                width={150}
-                height={40}
-                priority
-              />
-            </ Link>
-            <p className="font-body text-sm leading-relaxed text-primary-foreground/70 max-w-md">
-              A global leadership and personal development institution building
-              visionary, ethically grounded and strategically positioned
-              leaders.
+          <div className="md:col-span-1">
+            <h3 className="font-heading text-xl font-bold uppercase tracking-wider mb-3">LBN</h3>
+            <p className="text-sm text-secondary-foreground/70 leading-relaxed">
+              Unlocking purpose. Activating dominion capacity. Building legacy-driven systems.
             </p>
-            <div className="my-4">
-                  <p className="font-body text-sm font-semibold text-primary-foreground/70 uppercase tracking-wider mb-4">
-                    Follow Us
-                  </p>
-                  <div className="flex items-center gap-4">
-                    <Link
-                      href={CONTACT_INFO.instagram}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary transition-all group"
-                      aria-label="Instagram"
-                    >
-                      <FaInstagram className="w-3 h-3 text-white group-hover:text-primary-foreground transition-colors" />
-                    </Link>
-                    <Link
-                      href={CONTACT_INFO.youtube}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary transition-all group"
-                      aria-label="YouTube"
-                    >
-                      <FaYoutube className="w-3 h-3 text-white group-hover:text-primary-foreground transition-colors" />
-                    </Link>
-                    <Link
-                      href={CONTACT_INFO.tiktok}
-                      target="_blank"
-                      rel="noopener noreferrer"
-                      className="w-8 h-8 rounded-full bg-white/10 flex items-center justify-center hover:bg-secondary transition-all group"
-                      aria-label="TikTok"
-                    >
-                      <FaTiktok className="w-3 h-3 text-white group-hover:text-primary-foreground transition-colors" />
-                    </Link>
-                  </div>
-                </div>
           </div>
 
           {/* Quick Links */}
           <div>
-            <h4 className="font-body text-sm font-semibold tracking-wider uppercase mb-4 text-secondary">
-              Quick Links
-            </h4>
-            <div className="flex flex-col gap-3">
-              {footerLinks.map((link) => (
-                <Link
-                  key={link.label}
-                  href={link.path}
-                  className="font-body text-sm text-primary-foreground/70 hover:text-secondary transition-colors"
-                >
-                  {link.label}
-                </Link>
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider mb-4 text-accent">Navigate</h4>
+            <ul className="space-y-2 text-sm">
+              {["Home", "About", "Services", "Shop", "Blog", "Partner", "Contact"].map((item) => (
+                <li key={item}>
+                  <Link href={item === "Home" ? "/" : `/${item.toLowerCase()}`} className="text-secondary-foreground/70 hover:text-accent transition-colors">
+                    {item}
+                  </Link>
+                </li>
               ))}
-            </div>
+            </ul>
+          </div>
+
+          {/* Services */}
+          <div>
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider mb-4 text-accent">Services</h4>
+            <ul className="space-y-2 text-sm text-secondary-foreground/70">
+              <li>Personal Development</li>
+              <li>Leadership Consulting</li>
+              <li>Publishing & IP Development</li>
+            </ul>
           </div>
 
           {/* Contact */}
           <div>
-            <h4 className="font-body text-sm font-semibold tracking-wider uppercase mb-4 text-secondary">
-              Contact
-            </h4>
-            <div className="flex flex-col gap-3 font-body text-sm text-primary-foreground/70">
-              <a
-                href="mailto:info@primecounsel.co.uk"
-                className="hover:text-secondary transition-colors"
-              >
-                info@primecounsel.co.uk
-              </a>
-              <a
-                href="tel:+447774483791"
-                className="hover:text-secondary transition-colors"
-              >
-                +44 7774 483791
-              </a>
-            </div>
+            <h4 className="font-heading text-sm font-semibold uppercase tracking-wider mb-4 text-accent">Contact</h4>
+            <ul className="space-y-2 text-sm text-secondary-foreground/70">
+              <li>lbnow2016@gmail.com</li>
+              <li>09069755436</li>
+            </ul>
           </div>
         </div>
 
-        <div className="border-t border-primary-foreground/10 mt-12 pt-8 flex flex-col md:flex-row justify-between items-center gap-4">
-          <div className="flex items-center gap-4">
-            <Link
-              href="/privacy"
-              className="font-body text-xs text-primary-foreground/50 hover:text-secondary transition-colors"
-            >
-              Privacy Policy
-            </Link>
-            <Link
-              href="/terms"
-              className="font-body text-xs text-primary-foreground/50 hover:text-secondary transition-colors"
-            >
-              Terms of Use
-            </Link>
-          </div>
-          <p className="font-body text-xs text-primary-foreground/50">
-            © {new Date().getFullYear()} Prime Counsel. All rights reserved.
-          </p>
+        <div className="mt-12 pt-8 border-t border-secondary-foreground/10 text-center text-xs text-secondary-foreground/50">
+          © {new Date().getFullYear()} Living Beyond Now. All rights reserved.
         </div>
       </div>
     </footer>

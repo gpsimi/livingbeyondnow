@@ -61,7 +61,7 @@ export default buildConfig({
       },
     },
     meta: {
-      titleSuffix: '- Prime Counsel Limited',
+      titleSuffix: '- Living Beyond Now Limited',
       icons: [
         {
           rel: 'icon',
@@ -81,7 +81,7 @@ export default buildConfig({
   collections: [Blog, Media, Categories, Users, Testimonials, Products],
   email: resendAdapter({
     defaultFromAddress: 'info@primecounsel.co.uk',
-    defaultFromName: 'Prime Counsel Limited',
+    defaultFromName: 'Living Beyond Now Limited',
     apiKey: process.env.RESEND_API_KEY || '',
   }),
   cors: [getServerSideURL()].filter(Boolean),
@@ -102,7 +102,10 @@ export default buildConfig({
             if (!filename) return ''
             const folder = prefix || ''
             const publicId = folder ? `${folder}/${filename}` : filename
-            const cloudName = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME || ''
+            const cloudName =
+              process.env.CLOUDINARY_CLOUD_NAME ||
+              process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME ||
+              ''
             return `https://res.cloudinary.com/${cloudName}/image/upload/${publicId}`
           },
         },

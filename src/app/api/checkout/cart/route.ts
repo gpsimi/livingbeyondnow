@@ -1,23 +1,25 @@
 import { NextResponse } from 'next/server'
-import Stripe from 'stripe'
 import { getPayload } from 'payload'
 import configPromise from '@payload-config'
 
-const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
-  apiVersion: '2026-03-25.dahlia',
-})
+export const dynamic = 'force-dynamic'
 
 export async function POST(req: Request) {
   try {
-    const { items } = await req.json()
+    const { items, email } = await req.json()
 
     if (!items || !Array.isArray(items) || items.length === 0) {
       return NextResponse.json({ error: 'Cart is empty' }, { status: 400 })
     }
 
+    if (!email) {
+      return NextResponse.json({ error: 'Email is required' }, { status: 400 })
+    }
+
     const payload = await getPayload({ config: configPromise })
     
-    const line_items: any[] = []
+    let totalAmount = 0
+    let currency = 'USD'
     let primarySessionId = ''
 
     // Securely fetch each product's latest price from the database
@@ -36,34 +38,44 @@ export async function POST(req: Request) {
         primarySessionId = String(product.id)
       }
 
-      line_items.push({
-        price_data: {
-          currency: product.currency.toLowerCase(),
-          product_data: {
-            name: product.title,
-            description: product.shortDescription || undefined,
-          },
-          unit_amount: Math.round(product.price * 100), // Convert to cents
-        },
-        quantity: item.quantity,
-      })
+      totalAmount += Math.round(product.price * 100) * item.quantity
+      if (product.currency) {
+        currency = product.currency.toUpperCase()
+      }
     }
 
     const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
 
-    const session = await stripe.checkout.sessions.create({
-      mode: 'payment',
-      payment_method_types: ['card'],
-      line_items,
-      metadata: {
-        isCart: 'true',
-        primarySessionId, // Will be empty string if no session is in the cart
+    const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
+      method: 'POST',
+      headers: {
+        Authorization: `Bearer ${process.env.PAYSTACK_SECRET_KEY}`,
+        'Content-Type': 'application/json',
       },
-      success_url: `${siteUrl}/mentorship/success?session_id={CHECKOUT_SESSION_ID}`,
-      cancel_url: `${siteUrl}/shop`,
+      body: JSON.stringify({
+        email,
+        amount: totalAmount,
+        currency,
+        callback_url: `${siteUrl}/mentorship/success`,
+        metadata: {
+          isCart: 'true',
+          primarySessionId, // Will be empty string if no session is in the cart
+          items: items.map(item => ({ id: item.id, quantity: item.quantity })),
+        },
+      }),
     })
 
-    return NextResponse.json({ url: session.url })
+    const paystackData = await paystackRes.json()
+
+    if (!paystackData.status) {
+      console.error('Paystack initialization error:', paystackData)
+      return NextResponse.json(
+        { error: paystackData.message || 'Payment initialization failed' },
+        { status: 400 },
+      )
+    }
+
+    return NextResponse.json({ url: paystackData.data.authorization_url })
   } catch (error) {
     console.error('Cart Checkout Error:', error)
     return NextResponse.json({ error: 'Something went wrong during checkout' }, { status: 500 })

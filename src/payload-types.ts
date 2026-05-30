@@ -383,7 +383,7 @@ export interface Product {
   id: number;
   title: string;
   /**
-   * Determines checkout behavior. Sessions go directly to Stripe; Books/Digital go through cart.
+   * Determines checkout behavior. Sessions go directly to Paystack; Books/Digital go through cart.
    */
   type: 'book' | 'session' | 'digital';
   category: number | Category;

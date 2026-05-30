@@ -50,7 +50,7 @@ export const Products: CollectionConfig = {
       ],
       admin: {
         position: 'sidebar',
-        description: 'Determines checkout behavior. Sessions go directly to Stripe; Books/Digital go through cart.',
+        description: 'Determines checkout behavior. Sessions go directly to Paystack; Books/Digital go through cart.',
       },
     },
     {

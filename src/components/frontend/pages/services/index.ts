@@ -1,7 +1,7 @@
-import ServicesHero from "./services-hero";
-import ServiceBody from "./service-body";
+import ServiceHero from "./services-hero"
+import ServicesTier from "./services-tier"
 
 export {
-    ServicesHero,
-    ServiceBody,
+   ServiceHero,
+   ServicesTier,
 }

@@ -1,25 +1,21 @@
-import HeroSection from './hero-section'
-import InstitutionalIdentity from './InstitutionalIdentity'
-import PhilosophyPreview from './PhilosophyPreview'
-import ServicesOverview from './ServicesOverview'
-import AskPrimeSection from './AskPrimeSection'
-import TrustedOrganisations from './TrustedOrganisations'
-import MeetCoach from './meet-coach'
-import PillarSection from './pillar-section'
-import Testimonials from './testimonials' 
-import HomeBlogPreview from './home-blog-preview'
-import Statistics from './statistics'
+import HeroSection  from "./HeroSection";
+import ProblemSection  from "./ProblemSection";
+import ResponseSection  from "./ResponseSection";
+import ServiceTiers  from "./ServiceTiers";
+import ImpactMetrics  from "./ImpactMetrics";
+import ManifestoSection  from "./ManifestoSection";
+import ShopPreview  from "./ShopPreview";
+import BlogPreview  from "./BlogPreview";
+import FinalCTA  from "./FinalCTA";
 
 export {
-  HeroSection,
-  InstitutionalIdentity,
-  PillarSection,
-  PhilosophyPreview,
-  ServicesOverview,
-  AskPrimeSection,
-  TrustedOrganisations,
-  MeetCoach,
-  Testimonials,
-  HomeBlogPreview,
-  Statistics,
-}
+    HeroSection,
+    ProblemSection,
+    ResponseSection,
+    ServiceTiers,
+    ImpactMetrics,
+    ManifestoSection,
+    ShopPreview,
+    BlogPreview,
+    FinalCTA,
+};

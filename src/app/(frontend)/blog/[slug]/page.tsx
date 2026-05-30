@@ -1,221 +1,201 @@
-import type { Metadata } from 'next'
-import Image from 'next/image'
-import Link from 'next/link'
-import { draftMode } from 'next/headers'
-import { cache } from 'react'
-import { getPayload } from 'payload'
-import configPromise from '@payload-config'
-
-import { PayloadRedirects } from '@/components/PayloadRedirects'
-import { LivePreviewListener } from '@/components/LivePreviewListener'
-import RichText from '@/components/RichText'
-import { generateMeta } from '@/utilities/generateMeta'
-import type { Media, Category, Blog } from '@/payload-types'
-import Layout from '@/components/frontend/layout/Layout'
-import { BlogCard } from '@/components/frontend/blog/blog-card'
-import FadeIn from '@/components/frontend/FadeIn'
+import { notFound } from "next/navigation";
+import Link from "next/link";
+import { ArrowLeft } from "lucide-react";
+import { ShareButtons } from "@/components/frontend/pages/blog/ShareButtons";
+import { getPayload } from "payload";
+import configPromise from "@payload-config";
+import Image from "next/image";
+import RichText from "@/components/RichText";
+import { DefaultTypedEditorState } from "@payloadcms/richtext-lexical";
+import { Blog } from "@/payload-types";
 
 export async function generateStaticParams() {
-  const payload = await getPayload({ config: configPromise })
+  const payload = await getPayload({ config: configPromise });
   const posts = await payload.find({
-    collection: 'blog',
-    draft: false,
+    collection: "blog",
+    where: { _status: { equals: "published" } },
     limit: 1000,
-    overrideAccess: false,
-    pagination: false,
-    select: { slug: true },
-  })
-  return posts.docs.map(({ slug }) => ({ slug }))
+  });
+
+  return posts.docs.map((post) => ({
+    slug: post.slug,
+  }));
 }
 
-type Args = {
-  params: Promise<{ slug?: string }>
-}
+export default async function BlogPostPage({ params }: { params: Promise<{ slug: string }> }) {
+  const resolvedParams = await params;
+  const payload = await getPayload({ config: configPromise });
 
-function formatDate(dateStr?: string | null) {
-  if (!dateStr) return ''
-  return new Date(dateStr).toLocaleDateString('en-GB', {
-    day: '2-digit',
-    month: 'long',
-    year: 'numeric',
-  })
-}
+  const { docs } = await payload.find({
+    collection: "blog",
+    where: {
+      slug: {
+        equals: resolvedParams.slug,
+      },
+      _status: {
+        equals: "published",
+      },
+    },
+    limit: 1,
+    depth: 2, // Ensure categories, authors, and media are populated
+  });
 
-export default async function PostPage({ params: paramsPromise }: Args) {
-  const { isEnabled: draft } = await draftMode()
-  const { slug = '' } = await paramsPromise
-  const decodedSlug = decodeURIComponent(slug)
-  const url = '/blog/' + decodedSlug
-  const post = await queryPostBySlug({ slug: decodedSlug })
+  if (docs.length === 0) {
+    notFound();
+  }
 
-  if (!post) return <PayloadRedirects url={url} />
+  const post = docs[0];
 
-  const recentPosts = await queryRecentPosts({ excludeSlug: decodedSlug })
+  // Extract Category
+  let categoryTitle = "Article";
+  if (post.categories && post.categories.length > 0) {
+    const firstCategory = post.categories[0];
+    if (typeof firstCategory === "object" && firstCategory !== null && "title" in firstCategory) {
+      categoryTitle = firstCategory.title;
+    }
+  }
 
-  const heroImage = typeof post.heroImage === 'object' ? (post.heroImage as Media) : null
-  const imageUrl =
-    heroImage?.sizes?.xlarge?.url || heroImage?.sizes?.large?.url || heroImage?.url || null
+  // Extract Author
+  let authorName = "LBN Editorial";
+  if (post.populatedAuthors && post.populatedAuthors.length > 0) {
+    authorName = post.populatedAuthors.map(a => a.name).join(', ') || "LBN Editorial";
+  }
 
-  const allCategories = (post.categories ?? []).filter(
-    (cat): cat is Category => typeof cat === 'object',
-  )
+  // Format Date
+  const formattedDate = post.publishedAt
+    ? new Intl.DateTimeFormat("en-US", {
+        month: "short",
+        day: "numeric",
+        year: "numeric",
+      }).format(new Date(post.publishedAt))
+    : "";
+
+  // Extract Hero Image
+  let heroImageUrl = "";
+  if (post.heroImage && typeof post.heroImage === "object" && post.heroImage !== null && "url" in post.heroImage) {
+    heroImageUrl = post.heroImage.url || "";
+  }
+
+  // Fallback related posts
+  let related = post.relatedPosts || [];
+  if (related.length === 0) {
+    const fallback = await payload.find({
+      collection: "blog",
+      where: {
+        slug: { not_equals: resolvedParams.slug },
+        _status: { equals: "published" },
+      },
+      limit: 3,
+      sort: "-publishedAt",
+      depth: 1,
+    });
+    related = fallback.docs;
+  }
 
   return (
-    <Layout>
-      <article>
-        <PayloadRedirects disableNotFound url={url} />
-        {draft && <LivePreviewListener />}
+    <div className="bg-background min-h-screen">
+      {/* Hero Section */}
+      <section className="bg-[#1B3629] text-white pt-24 pb-32 px-4 md:px-6">
+        <div className="container max-w-4xl mx-auto">
+          <Link
+            href="/blog"
+            className="inline-flex items-center gap-2 text-white/70 hover:text-[#D4AF37] text-xs uppercase tracking-wider mb-8 transition-colors font-medium"
+          >
+            <ArrowLeft className="h-4 w-4" /> Back to Blog
+          </Link>
+          <div className="animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <span className="text-[#D4AF37] font-bold text-xs uppercase tracking-[0.25em]">
+              {categoryTitle}
+            </span>
+            <h1 className="font-heading text-4xl md:text-5xl lg:text-6xl font-bold uppercase tracking-tight mt-4 mb-8 leading-[0.95] text-balance">
+              {post.title}
+            </h1>
+            <div className="flex flex-wrap items-center gap-3 text-xs uppercase tracking-wider text-white/60 font-medium">
+              <span>{authorName}</span>
+              <span>·</span>
+              <span>{formattedDate}</span>
+            </div>
+          </div>
+        </div>
+      </section>
 
-        {/* ── Hero ── */}
-        <section className="relative min-h-[340px] md:min-h-[420px] flex flex-col justify-end bg-primary overflow-hidden">
-          {imageUrl && (
-            <Image
-              src={imageUrl}
-              alt={post.title}
-              fill
-              className="object-cover opacity-40"
+      {/* Featured image */}
+      <div className="container max-w-5xl mx-auto px-4 md:px-6 -mt-20 relative z-10">
+        <div className="aspect-[21/9] bg-gradient-to-br from-[#8B2C2C] via-[#8B2C2C]/80 to-[#1B3629] rounded-xl shadow-2xl border border-white/10 relative overflow-hidden">
+          {heroImageUrl && (
+            <Image 
+              src={heroImageUrl} 
+              alt={post.title} 
+              fill 
+              className="object-cover opacity-90"
+              sizes="(max-width: 1024px) 100vw, 1024px"
               priority
-              sizes="100vw"
             />
           )}
-          {/* Gradient overlay */}
-          <div className="absolute inset-0 bg-linear-to-t from-primary via-primary/70 to-primary/30" />
+        </div>
+      </div>
 
-          {/* Hero content */}
-          <div className="relative z-10 container-narrow px-4 pb-12 pt-28">
-            <FadeIn direction="up">
-              {/* Category breadcrumb */}
-              {allCategories.length > 0 && (
-                <div className="flex flex-wrap gap-2 mb-4">
-                  {allCategories.map((cat) => (
-                    <span
-                      key={cat.id}
-                      className="text-gold text-[10px] font-bold uppercase tracking-[0.2em]"
-                    >
-                      {cat.title}
-                    </span>
-                  ))}
-                </div>
-              )}
+      {/* Content */}
+      <section className="py-20 px-4 md:px-6">
+        <div className="container max-w-3xl mx-auto">
+          <article className="space-y-6 text-foreground/85 text-lg md:text-xl leading-relaxed font-body">
+            <RichText data={post.content as unknown as DefaultTypedEditorState} />
+          </article>
 
-              <h1 className="font-heading text-3xl md:text-5xl text-white uppercase leading-tight mb-4 max-w-3xl">
-                {post.title}
-              </h1>
-
-              {post.publishedAt && (
-                <p className="text-white/50 text-sm">{formatDate(post.publishedAt)}</p>
-              )}
-            </FadeIn>
+          {/* Share */}
+          <div className="mt-16 pt-8 border-t border-border">
+            <ShareButtons url={`/blog/${post.slug}`} title={post.title} />
           </div>
-        </section>
+        </div>
+      </section>
 
-        {/* ── Article Body ── */}
-        <section className="bg-white py-12 px-4">
-          <div className="container-narrow">
-            <div className="max-w-2xl mx-auto">
-              <FadeIn direction="up" delay={0.2}>
-                <RichText
-                  data={post.content}
-                  enableGutter={false}
-                  className="
-                  prose prose-base max-w-none
-                  prose-headings:font-heading prose-headings:uppercase prose-headings:tracking-wide prose-headings:text-primary
-                  prose-p:font-body prose-p:text-foreground/80 prose-p:leading-relaxed
-                  prose-a:text-accent prose-a:no-underline hover:prose-a:underline
-                  prose-blockquote:border-l-4 prose-blockquote:border-accent
-                  prose-blockquote:pl-5 prose-blockquote:italic prose-blockquote:text-foreground/70
-                  prose-strong:text-primary
-                "
-                />
-              </FadeIn>
+      {/* Related Posts */}
+      {related.length > 0 && (
+        <section className="py-24 bg-muted/30">
+          <div className="container max-w-6xl mx-auto px-4 md:px-6">
+            <h2 className="font-heading text-2xl md:text-3xl font-bold uppercase tracking-tight mb-12 text-center">
+              Continue Reading
+            </h2>
+            <div className="grid md:grid-cols-3 gap-8">
+              {related.map((r: number | Blog) => {
+                if (typeof r === "number") return null;
+                const rSlug = r.slug || "";
+                if (!rSlug) return null;
+                
+                let rCategory = "Article";
+                if (r.categories && r.categories.length > 0) {
+                  const fCat = r.categories[0];
+                  if (typeof fCat === "object" && fCat !== null && "title" in fCat) {
+                    rCategory = fCat.title;
+                  }
+                }
+                const rDate = r.publishedAt ? new Intl.DateTimeFormat("en-US", { month: "short", day: "numeric", year: "numeric" }).format(new Date(r.publishedAt)) : "";
+
+                return (
+                  <Link key={rSlug} href={`/blog/${rSlug}`} className="block group">
+                    <article className="bg-card rounded-lg border border-border overflow-hidden h-full hover:shadow-xl transition-all duration-300 flex flex-col group-hover:-translate-y-1">
+                      <div className="aspect-[16/10] bg-gradient-to-br from-[#8B2C2C]/90 to-[#1B3629] p-6 flex items-center justify-center relative overflow-hidden">
+                        <div className="absolute inset-0 bg-black/10 group-hover:bg-transparent transition-colors" />
+                        <span className="relative z-10 text-white/90 font-bold uppercase text-[10px] tracking-[0.25em]">
+                          {rCategory}
+                        </span>
+                      </div>
+                      <div className="p-6 flex-1 flex flex-col">
+                        <h3 className="font-heading text-lg font-bold uppercase leading-tight mb-4 group-hover:text-[#8B2C2C] transition-colors">
+                          {r.title}
+                        </h3>
+                        <p className="text-xs text-muted-foreground font-medium mt-auto uppercase tracking-wider">
+                          {rDate}
+                        </p>
+                      </div>
+                    </article>
+                  </Link>
+                );
+              })}
             </div>
           </div>
         </section>
-
-        {/* ── Recent Posts ── */}
-        {recentPosts.length > 0 && (
-          <section className="bg-surface py-16 px-4 border-t border-border">
-            <div className="container-narrow">
-              <FadeIn direction="up">
-                <h2 className="font-heading text-2xl md:text-3xl text-primary mb-8 uppercase tracking-wide text-center">
-                  Recent Insights
-                </h2>
-              </FadeIn>
-              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 max-w-4xl mx-auto">
-                {recentPosts.map((recentPost, i) => (
-                  <FadeIn key={recentPost.id} direction="up" delay={0.1 * i}>
-                    <BlogCard post={recentPost as Blog} />
-                  </FadeIn>
-                ))}
-              </div>
-            </div>
-          </section>
-        )}
-
-        {/* ── Navigation Footer ── */}
-        <section className="bg-white border-t border-border py-8 px-4">
-          <div className="container-narrow">
-            <FadeIn direction="up" delay={0.1}>
-              <div className="max-w-2xl mx-auto flex items-center justify-between gap-4 flex-wrap">
-                <Link
-                  href="/blog"
-                  className="text-sm font-semibold text-primary hover:text-accent transition-colors flex items-center gap-2 group"
-                >
-                  <span className="group-hover:-translate-x-1 transition-transform duration-200">
-                    ←
-                  </span>
-                  Back to Insights
-                </Link>
-                <Link href="/contact" className="btn-secondary text-sm">
-                  Begin Your Journey
-                </Link>
-              </div>
-            </FadeIn>
-          </div>
-        </section>
-      </article>
-    </Layout>
-  )
+      )}
+    </div>
+  );
 }
-
-export async function generateMetadata({ params: paramsPromise }: Args): Promise<Metadata> {
-  const { slug = '' } = await paramsPromise
-  const post = await queryPostBySlug({ slug: decodeURIComponent(slug) })
-  return generateMeta({ doc: post })
-}
-
-const queryPostBySlug = cache(async ({ slug }: { slug: string }) => {
-  const { isEnabled: draft } = await draftMode()
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'blog',
-    draft,
-    limit: 1,
-    overrideAccess: draft,
-    pagination: false,
-    depth: 2,
-    where: {
-      slug: { equals: slug },
-    },
-  })
-
-  return result.docs?.[0] || null
-})
-
-const queryRecentPosts = cache(async ({ excludeSlug }: { excludeSlug: string }) => {
-  const payload = await getPayload({ config: configPromise })
-
-  const result = await payload.find({
-    collection: 'blog',
-    limit: 2,
-    overrideAccess: false,
-    sort: '-createdAt',
-    depth: 2,
-    where: {
-      slug: { not_equals: excludeSlug },
-    },
-  })
-
-  return result.docs || []
-})

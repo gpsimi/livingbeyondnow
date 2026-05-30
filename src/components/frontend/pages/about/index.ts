@@ -1,15 +1,12 @@
-import AboutHero from "./about-hero";
-import AboutBody from "./about-body";
-import AboutVision from "./about-vision";
-import AboutMission from "./about-mission";
-import OurTeam from "./our-team";
-import AboutConviction from "./about-conviction";
+import AboutHero from "./about-hero"
+import VisionMission from "./vision-mission"
+import CoreValues from "./core-values"
+import MovementStatement from "./movement-statement"
+
 
 export{
     AboutHero,
-    AboutBody,
-    AboutMission,
-    AboutVision,
-    OurTeam,
-    AboutConviction,
+    VisionMission,
+    CoreValues,
+    MovementStatement
 }
