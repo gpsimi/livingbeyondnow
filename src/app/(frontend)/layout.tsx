@@ -3,7 +3,7 @@ import { Inter, Montserrat, Oswald } from "next/font/google";
 import './globals.css'
 import Header from "@/components/frontend/layout/Header";
 import Footer from "@/components/frontend/layout/Footer";
-import { Providers } from "@/components/frontend/Providers";
+import { Providers } from "@/components/frontend/providers";
 
 const inter = Inter({ subsets: ["latin"], variable: "--font-inter" });
 const montserrat = Montserrat({ subsets: ["latin"], variable: "--font-montserrat" });
