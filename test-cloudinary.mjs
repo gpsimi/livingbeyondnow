@@ -6,7 +6,7 @@ import { fileURLToPath } from 'url'
 
 // Load env manually
 import { config } from 'dotenv'
-config({ path: 'c:/Users/Godspower Similoluwa/Documents/GitHub/prime-counsel-website/.env' })
+config({ path: 'c:/Users/Godspower Similoluwa/Documents/GitHub/livingbeyondnow/.env' })
 
 const cloud_name = process.env.CLOUDINARY_CLOUD_NAME || process.env.NEXT_PUBLIC_CLOUDINARY_CLOUD_NAME
 const api_key = process.env.CLOUDINARY_API_KEY
@@ -45,7 +45,7 @@ const pngBuffer = Buffer.from(
 try {
   await new Promise((resolve, reject) => {
     const uploadStream = cloudinary.uploader.upload_stream(
-      { public_id: 'diagnostic-test', folder: 'prime-counsel-test', overwrite: true, resource_type: 'auto' },
+      { public_id: 'diagnostic-test', folder: 'livingbeyondnow-test', overwrite: true, resource_type: 'auto' },
       (error, result) => {
         if (error) {
           console.error('❌ Upload failed:', JSON.stringify(error, null, 2))

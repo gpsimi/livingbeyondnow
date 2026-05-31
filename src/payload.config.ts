@@ -80,8 +80,8 @@ export default buildConfig({
   }),
   collections: [Blog, Media, Categories, Users, Testimonials, Products],
   email: resendAdapter({
-    defaultFromAddress: 'info@primecounsel.co.uk',
-    defaultFromName: 'Living Beyond Now Limited',
+    defaultFromAddress: 'info@livingbeyondnow.org',
+    defaultFromName: 'Living Beyond Now',
     apiKey: process.env.RESEND_API_KEY || '',
   }),
   cors: [getServerSideURL()].filter(Boolean),
