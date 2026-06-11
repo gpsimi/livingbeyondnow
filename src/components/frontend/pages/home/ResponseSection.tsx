@@ -1,6 +1,7 @@
 "use client";
 
 import { motion } from "framer-motion";
+import Image from "next/image";
 
 const ResponseSection = () => (
   <section className="py-24 bg-background">
@@ -30,14 +31,22 @@ const ResponseSection = () => (
           whileInView={{ opacity: 1, x: 0 }}
           viewport={{ once: true }}
           transition={{ duration: 0.6, delay: 0.2 }}
-          className="relative"
+          className="relative aspect-4/3 rounded-lg overflow-hidden border border-border group"
         >
-          <div className="aspect-4/3 rounded-lg bg-linear-to-br from-primary/10 via-accent/5 to-secondary/10 flex items-center justify-center border border-border">
-            <div className="text-center p-8">
-              <div className="w-16 h-16 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                <span className="text-primary font-heading text-2xl font-bold">LBN</span>
+          <Image
+            src="/images/response_bg.png"
+            alt="Living Beyond Now architectural structure representing purpose, strategy, and legacy"
+            fill
+            className="object-cover transition-transform duration-700 group-hover:scale-105"
+            sizes="(max-width: 768px) 100vw, 50vw"
+            priority
+          />
+          <div className="absolute inset-0 bg-black/50 flex items-center justify-center p-8 text-center backdrop-blur-[2px]">
+            <div className="relative z-10">
+              <div className="w-16 h-16 rounded-full bg-primary/20 border border-primary/30 flex items-center justify-center mx-auto mb-4 backdrop-blur-md">
+                <span className="text-white font-heading text-2xl font-bold">LBN</span>
               </div>
-              <p className="font-heading text-lg uppercase tracking-wider text-foreground/60">Purpose → Structure → Legacy</p>
+              <p className="font-heading text-lg uppercase tracking-wider text-white font-medium">Purpose → Structure → Legacy</p>
             </div>
           </div>
         </motion.div>

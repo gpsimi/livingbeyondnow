@@ -15,9 +15,9 @@ const HeroSection = () => (
         className="object-cover"
         priority
       />
-      <div className="absolute inset-0 bg-gradient-to-r from-secondary/90 via-secondary/70 to-secondary/40" />
+      <div className="absolute inset-0 bg-linear-to-r from-secondary/90 via-secondary/70 to-secondary/40" />
     </div>
-    <div className="container relative z-10 py-24">
+    <div className="container-narrow lg:container relative z-10 py-24">
       <motion.div
         initial={{ opacity: 0, y: 30 }}
         animate={{ opacity: 1, y: 0 }}

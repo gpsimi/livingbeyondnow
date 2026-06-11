@@ -2,9 +2,11 @@
 
 import { useState } from "react";
 import Link from "next/link";
+import Image from "next/image";
 import { usePathname } from "next/navigation";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import logo1 from "@/assets/logos/LBN-logo.png";  
 
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetTrigger } from "@/components/ui/sheet";
 
@@ -23,11 +25,29 @@ const Header = () => {
   const pathname = usePathname();
 
   return (
+    // <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 border-b border-border">
     <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-backdrop-filter:bg-background/80 border-b border-border">
       <div className="container-narrow flex h-20 items-center justify-between">
-        <Link href="/" className="flex items-center gap-2">
-          <span className="font-heading text-2xl font-bold uppercase tracking-wider text-primary">LBN</span>
-          <span className="hidden sm:inline text-xs font-body text-muted-foreground tracking-widest uppercase">Living Beyond Now</span>
+        <Link href="/" className="relative z-10 flex items-center">
+          <Image
+            src={logo1}
+            alt="Logo"
+            width={40}
+            height={40}
+            className="mr-2"
+          />
+          <div
+            className="flex flex-col items-start"
+          >
+            <span
+              className="font-heading text-lg lg:text-xl font-bold tracking-tight transition-colors duration-300">
+              LIVING BEYOND NOW
+            </span>
+            <span
+              className="text-[7px] lg:text-[7.5px] font-bold tracking-[0.3em] uppercase transition-colors duration-300">
+              EMPOWERMENT OUTREACH
+            </span>
+          </div>
         </Link>
 
         {/* Desktop Nav */}
@@ -65,7 +85,15 @@ const Header = () => {
           </SheetTrigger>
           <SheetContent side="right" className="w-[85vw] sm:max-w-sm flex flex-col p-6">
             <SheetHeader className="text-left mb-6">
-              <SheetTitle className="font-heading text-2xl font-bold uppercase tracking-wider text-primary">LBN</SheetTitle>
+              <SheetTitle>
+                <Image
+                  src={logo1}
+                  alt="Living Beyond Now Logo"
+                  width={140}
+                  height={35}
+                  className="h-8 w-auto object-contain"
+                />
+              </SheetTitle>
             </SheetHeader>
             <nav className="flex flex-col gap-1">
               {navLinks.map((link) => (

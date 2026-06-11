@@ -12,6 +12,9 @@ const oswald = Oswald({ subsets: ["latin"], variable: "--font-oswald" });
 export const metadata: Metadata = {
   title: "Living Beyond Now",
   description: "Unlocking purpose. Activating dominion capacity. Building legacy-driven systems.",
+  icons: {
+    icon: "/icon.png",
+  },
 };
 
 export default function RootLayout({
@@ -20,7 +23,7 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${inter.variable} ${montserrat.variable} ${oswald.variable}`}>
+    <html lang="en" className={`${inter.variable} ${montserrat.variable} ${oswald.variable}`} suppressHydrationWarning>
       <body className="font-body min-h-screen bg-background text-foreground antialiased">
         <Providers>
           <Header />
