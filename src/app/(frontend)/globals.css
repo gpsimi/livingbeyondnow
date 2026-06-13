@@ -1,6 +1,7 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Oswald:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
+@plugin '@tailwindcss/typography';
 
 @theme {
   --font-heading: var(--font-oswald), Oswald, sans-serif;
@@ -168,4 +169,27 @@
   .text-balance {
     text-wrap: balance;
   }
+}
+
+/* Fallback list styles for Payload CMS rich text lists */
+.payload-richtext ul,
+ul.payload-richtext__list--unordered {
+  list-style-type: disc !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.payload-richtext ol,
+ol.payload-richtext__list--ordered {
+  list-style-type: decimal !important;
+  padding-left: 1.5rem !important;
+  margin-top: 0.5rem !important;
+  margin-bottom: 0.5rem !important;
+}
+
+.payload-richtext li {
+  list-style: inherit !important;
+  margin-top: 0.25rem !important;
+  margin-bottom: 0.25rem !important;
 }

@@ -1,5 +1,5 @@
 import React from 'react';
-import logoNoBg from '@/assets/logos/LBN.png';
+import logoNoBg from '@/assets/logos/lbn-logo.png';
 import Image from 'next/image';
 
 export default function Icon() {

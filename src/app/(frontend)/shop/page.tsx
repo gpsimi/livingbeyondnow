@@ -5,6 +5,7 @@ import { ShopGridProduct } from "@/components/frontend/pages/shop/shop-grid";
 
 export const dynamic = "force-dynamic";
 
+
 export default async function Shop() {
   const payload = await getPayload({ config: configPromise });
 

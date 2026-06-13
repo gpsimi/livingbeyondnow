@@ -11,7 +11,7 @@ const AboutHero = () => {
           <span className="text-accent font-heading text-sm uppercase tracking-[0.2em] font-semibold">About Us</span>
           <h1 className="font-heading text-4xl md:text-6xl font-bold uppercase tracking-tight mt-3 mb-6">Our Story</h1>
           <p className="text-secondary-foreground/70 text-lg leading-relaxed">
-            Living Beyond Now was born from a conviction: that too many gifted people live beneath their potential — not because they lack talent, but because they lack the structures, strategies, and spiritual clarity to translate purpose into legacy.
+            Living Beyond Now was born from a conviction: that too many gifted people live beneath their potential, not because they lack talent, but because they lack the structures, strategies, and spiritual clarity to translate purpose into legacy.
           </p>
         </motion.div>
       </div>

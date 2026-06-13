@@ -3,6 +3,10 @@ import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { ShopPreviewCard, ShopPreviewProduct } from "./ShopPreviewCard";
 
+
+export const dynamic = "force-dynamic";
+
+
 export default async function ShopPreview() {
   const payload = await getPayload({ config: configPromise });
 

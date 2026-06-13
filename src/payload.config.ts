@@ -61,12 +61,12 @@ export default buildConfig({
       },
     },
     meta: {
-      titleSuffix: '- Living Beyond Now Limited',
+      titleSuffix: '- Living Beyond Now',
       icons: [
         {
           rel: 'icon',
-          type: 'image/svg+xml',
-          url: '/favicon.svg',
+          type: 'image/png',
+          url: '/icon.png',
         },
       ],
     },

@@ -3,6 +3,9 @@ import { getPayload } from "payload";
 import configPromise from "@payload-config";
 import { BlogPreviewCard, BlogPreviewPost } from "./BlogPreviewCard";
 
+export const dynamic = "force-dynamic";
+
+
 export default async function BlogPreview() {
   const payload = await getPayload({ config: configPromise });
 
