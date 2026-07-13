@@ -62,7 +62,7 @@ const BlogGrid = ({ posts, categories }: BlogGridProps) => {
                                 viewport={{ once: true }}
                                 transition={{ duration: 0.5, delay: i * 0.1 }}
                             >
-                                <div className="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-shadow h-full flex flex-col">
+                                <Link href={`/blog/${post.slug}`} className="bg-card rounded-lg border border-border p-6 hover:shadow-lg transition-shadow h-full flex flex-col">
                                     <span className="text-accent text-xs font-semibold uppercase tracking-[0.15em]">{post.category}</span>
                                     <h3 className="font-heading text-lg font-bold uppercase mt-2 mb-3 leading-tight">{post.title}</h3>
                                     <p className="text-muted-foreground text-sm leading-relaxed flex-1">{post.excerpt}</p>
@@ -70,7 +70,7 @@ const BlogGrid = ({ posts, categories }: BlogGridProps) => {
                                         <span className="text-xs text-muted-foreground">{post.date}</span>
                                         <Link href={`/blog/${post.slug}`} className="text-primary text-sm font-semibold hover:text-accent transition-colors cursor-pointer">Read →</Link>
                                     </div>
-                                </div>
+                                </Link>
                             </motion.div>
                         ))}
                     </div>

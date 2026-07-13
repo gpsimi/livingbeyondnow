@@ -12,6 +12,8 @@ import { Media } from './collections/Media'
 import { Blog } from './collections/Blog'
 import { Testimonials } from './collections/Testimonials/index'
 import { Products } from './collections/Products'
+import { Downloads } from './collections/Downloads'
+import { BookFiles } from './collections/BookFiles'
 
 import { Users } from './collections/Users'
 import { plugins } from './plugins'
@@ -77,10 +79,11 @@ export default buildConfig({
     pool: {
       connectionString: process.env.DATABASE_URL || '',
     },
+    push: false,
   }),
-  collections: [Blog, Media, Categories, Users, Testimonials, Products],
+  collections: [Blog, Media, Categories, Users, Testimonials, Products, Downloads, BookFiles],
   email: resendAdapter({
-    defaultFromAddress: 'info@livingbeyondnow.org',
+    defaultFromAddress: process.env.SENDER_EMAIL || 'info@livingbeyondnow.org',
     defaultFromName: 'Living Beyond Now',
     apiKey: process.env.RESEND_API_KEY || '',
   }),

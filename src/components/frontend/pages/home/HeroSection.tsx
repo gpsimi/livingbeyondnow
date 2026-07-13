@@ -10,7 +10,7 @@ const HeroSection = () => (
     <div className="absolute inset-0">
       <Image
         src={heroImage}
-        alt="Leaders in strategic discussion"
+        alt="African leaders and business professionals collaborating in a modern setting"
         fill
         className="object-cover"
         priority

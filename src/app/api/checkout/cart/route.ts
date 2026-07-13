@@ -18,9 +18,7 @@ export async function POST(req: Request) {
 
     const payload = await getPayload({ config: configPromise })
     
-    let totalAmount = 0
-    let currency = 'USD'
-    let primarySessionId = ''
+    let totalUsdCents = 0
 
     // Securely fetch each product's latest price from the database
     for (const item of items) {
@@ -34,17 +32,18 @@ export async function POST(req: Request) {
         return NextResponse.json({ error: `Product not found: ${item.id}` }, { status: 404 })
       }
 
-      if (product.type === 'session' && !primarySessionId) {
-        primarySessionId = String(product.id)
-      }
-
-      totalAmount += Math.round(product.price * 100) * item.quantity
-      if (product.currency) {
-        currency = product.currency.toUpperCase()
-      }
+      totalUsdCents += Math.round(product.price * 100) * item.quantity
     }
 
-    const siteUrl = process.env.NEXT_PUBLIC_APP_URL || 'http://localhost:3000'
+    // Convert USD to NGN for Paystack payment processing
+    const conversionRate = process.env.USD_TO_NGN_RATE
+      ? Number(process.env.USD_TO_NGN_RATE)
+      : 1600
+
+    const totalNgnKobo = totalUsdCents * conversionRate
+
+    const rawSiteUrl = process.env.NEXT_PUBLIC_BASE_URL || process.env.NEXT_PUBLIC_APP_URL || process.env.NEXT_PUBLIC_SERVER_URL || 'http://localhost:3000'
+    const siteUrl = rawSiteUrl.endsWith('/') ? rawSiteUrl.slice(0, -1) : rawSiteUrl
 
     const paystackRes = await fetch('https://api.paystack.co/transaction/initialize', {
       method: 'POST',
@@ -54,12 +53,13 @@ export async function POST(req: Request) {
       },
       body: JSON.stringify({
         email,
-        amount: totalAmount,
-        currency,
-        callback_url: `${siteUrl}/mentorship/success`,
+        amount: totalNgnKobo,
+        currency: 'NGN',
+        callback_url: `${siteUrl}/checkout/success`,
         metadata: {
           isCart: 'true',
-          primarySessionId, // Will be empty string if no session is in the cart
+          usdAmount: totalUsdCents / 100,
+          conversionRate,
           items: items.map(item => ({ id: item.id, quantity: item.quantity })),
         },
       }),

@@ -1,7 +1,7 @@
 "use client";
 
 import { createContext, useContext } from "react";
-import { Product } from "@/constants";
+import { Product } from "@/payload-types";
 
 export type CartItem = { product: Product; quantity: number };
 
@@ -9,11 +9,11 @@ export type ShopContextValue = {
   cart: CartItem[];
   wishlist: Product[];
   addToCart: (product: Product, quantity?: number) => void;
-  removeFromCart: (id: string) => void;
-  updateQuantity: (id: string, quantity: number) => void;
+  removeFromCart: (id: number) => void;
+  updateQuantity: (id: number, quantity: number) => void;
   clearCart: () => void;
   toggleWishlist: (product: Product) => void;
-  isWishlisted: (id: string) => boolean;
+  isWishlisted: (id: number) => boolean;
   cartCount: number;
   cartSubtotal: number;
   isMounted: boolean;

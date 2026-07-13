@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ShoppingBag, Minus, Plus, Trash2 } from "lucide-react";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Separator } from "@/components/ui/separator";
+import Image from "next/image";
 
 export function CartSidebar() {
   const { cart, cartCount, cartSubtotal, updateQuantity, removeFromCart, isMounted } = useShop();
@@ -44,9 +45,25 @@ export function CartSidebar() {
             </div>
           ) : (
             <div className="space-y-6">
-              {cart.map((item) => (
-                <div key={item.product.id} className="flex gap-4">
-                  <div className="h-24 w-16 bg-gradient-to-br from-[#8B2C2C] to-[#1B3629] rounded flex-shrink-0" />
+              {cart.map((item) => {
+                const image = item.product.heroImage
+                const imageUrl =
+                  image && typeof image === 'object' && 'url' in image ? image.url || '' : ''
+
+                return (
+                  <div key={item.product.id} className="flex gap-4">
+                    {imageUrl ? (
+                      <div className="h-24 w-16 overflow-hidden rounded shrink-0 relative">
+                        <Image
+                          src={imageUrl}
+                          alt={item.product.title}
+                          fill
+                          className="object-cover"
+                        />
+                      </div>
+                    ) : (
+                      <div className="h-24 w-16 bg-linear-to-br from-[#8B2C2C] to-[#1B3629] rounded shrink-0" />
+                    )}
                   <div className="flex-1 flex flex-col justify-between">
                     <div>
                       <div className="flex justify-between items-start gap-2">
@@ -61,7 +78,7 @@ export function CartSidebar() {
                         </button>
                       </div>
                       <p className="text-xs text-muted-foreground mt-1">
-                        {item.product.format || item.product.category}
+                        {item.product.format || (typeof item.product.category === 'object' && item.product.category !== null ? item.product.category.title : 'Book')}
                       </p>
                     </div>
 
@@ -89,7 +106,8 @@ export function CartSidebar() {
                     </div>
                   </div>
                 </div>
-              ))}
+              )
+            })}
             </div>
           )}
         </ScrollArea>

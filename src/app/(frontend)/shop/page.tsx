@@ -28,12 +28,19 @@ export default async function Shop() {
       }
     }
 
+    let imageUrl = "";
+    if (product.heroImage && typeof product.heroImage === "object" && "url" in product.heroImage) {
+      imageUrl = product.heroImage.url || "";
+    }
+
     return {
       title: product.title,
       category: categoryTitle,
       subtitle: product.shortDescription || "",
       description: product.shortDescription || "",
       slug: product.slug || "",
+      price: product.price || 0,
+      image: imageUrl,
     };
   });
 

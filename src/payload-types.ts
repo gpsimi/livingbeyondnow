@@ -73,6 +73,8 @@ export interface Config {
     users: User;
     testimonials: Testimonial;
     products: Product;
+    downloads: Download;
+    'book-files': BookFile;
     redirects: Redirect;
     forms: Form;
     'form-submissions': FormSubmission;
@@ -95,6 +97,8 @@ export interface Config {
     users: UsersSelect<false> | UsersSelect<true>;
     testimonials: TestimonialsSelect<false> | TestimonialsSelect<true>;
     products: ProductsSelect<false> | ProductsSelect<true>;
+    downloads: DownloadsSelect<false> | DownloadsSelect<true>;
+    'book-files': BookFilesSelect<false> | BookFilesSelect<true>;
     redirects: RedirectsSelect<false> | RedirectsSelect<true>;
     forms: FormsSelect<false> | FormsSelect<true>;
     'form-submissions': FormSubmissionsSelect<false> | FormSubmissionsSelect<true>;
@@ -383,12 +387,12 @@ export interface Product {
   id: number;
   title: string;
   /**
-   * Determines checkout behavior. Sessions go directly to Paystack; Books/Digital go through cart.
+   * Determines checkout behavior. Only Books are currently supported.
    */
-  type: 'book' | 'session' | 'digital';
+  type: 'book';
   category: number | Category;
   price: number;
-  currency: 'GBP' | 'USD' | 'NGN';
+  currency: 'USD' | 'NGN';
   heroImage: number | Media;
   shortDescription: string;
   description: {
@@ -406,21 +410,10 @@ export interface Product {
     };
     [k: string]: unknown;
   };
-  gains?:
-    | {
-        gain: string;
-        id?: string | null;
-      }[]
-    | null;
-  whoFor: string;
+  pages?: number | null;
+  format: string;
   buttonText: string;
-  /**
-   * Optional. Override the global Calendly link for this specific product.
-   */
-  calendlyLink?: string | null;
-  duration?: string | null;
-  location: 'Online' | 'In-Person' | 'Online / In-Person';
-  booking?: string | null;
+  bookFile?: (number | null) | BookFile;
   meta?: {
     title?: string | null;
     /**
@@ -438,6 +431,39 @@ export interface Product {
   updatedAt: string;
   createdAt: string;
   _status?: ('draft' | 'published') | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "book-files".
+ */
+export interface BookFile {
+  id: number;
+  updatedAt: string;
+  createdAt: string;
+  url?: string | null;
+  thumbnailURL?: string | null;
+  filename?: string | null;
+  mimeType?: string | null;
+  filesize?: number | null;
+  width?: number | null;
+  height?: number | null;
+  focalX?: number | null;
+  focalY?: number | null;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads".
+ */
+export interface Download {
+  id: number;
+  token: string;
+  product: number | Product;
+  email: string;
+  downloadCount: number;
+  maxDownloads: number;
+  expiresAt: string;
+  updatedAt: string;
+  createdAt: string;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema
@@ -792,6 +818,14 @@ export interface PayloadLockedDocument {
         value: number | Product;
       } | null)
     | ({
+        relationTo: 'downloads';
+        value: number | Download;
+      } | null)
+    | ({
+        relationTo: 'book-files';
+        value: number | BookFile;
+      } | null)
+    | ({
         relationTo: 'redirects';
         value: number | Redirect;
       } | null)
@@ -1043,18 +1077,10 @@ export interface ProductsSelect<T extends boolean = true> {
   heroImage?: T;
   shortDescription?: T;
   description?: T;
-  gains?:
-    | T
-    | {
-        gain?: T;
-        id?: T;
-      };
-  whoFor?: T;
+  pages?: T;
+  format?: T;
   buttonText?: T;
-  calendlyLink?: T;
-  duration?: T;
-  location?: T;
-  booking?: T;
+  bookFile?: T;
   meta?:
     | T
     | {
@@ -1068,6 +1094,37 @@ export interface ProductsSelect<T extends boolean = true> {
   updatedAt?: T;
   createdAt?: T;
   _status?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "downloads_select".
+ */
+export interface DownloadsSelect<T extends boolean = true> {
+  token?: T;
+  product?: T;
+  email?: T;
+  downloadCount?: T;
+  maxDownloads?: T;
+  expiresAt?: T;
+  updatedAt?: T;
+  createdAt?: T;
+}
+/**
+ * This interface was referenced by `Config`'s JSON-Schema
+ * via the `definition` "book-files_select".
+ */
+export interface BookFilesSelect<T extends boolean = true> {
+  updatedAt?: T;
+  createdAt?: T;
+  url?: T;
+  thumbnailURL?: T;
+  filename?: T;
+  mimeType?: T;
+  filesize?: T;
+  width?: T;
+  height?: T;
+  focalX?: T;
+  focalY?: T;
 }
 /**
  * This interface was referenced by `Config`'s JSON-Schema

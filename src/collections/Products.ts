@@ -45,12 +45,10 @@ export const Products: CollectionConfig = {
       defaultValue: 'book',
       options: [
         { label: 'Book', value: 'book' },
-        { label: 'Mentorship Session', value: 'session' },
-        { label: 'Digital Product', value: 'digital' },
       ],
       admin: {
         position: 'sidebar',
-        description: 'Determines checkout behavior. Sessions go directly to Paystack; Books/Digital go through cart.',
+        description: 'Determines checkout behavior. Only Books are currently supported.',
       },
     },
     {
@@ -79,9 +77,8 @@ export const Products: CollectionConfig = {
             {
                 name: 'currency',
                 type: 'select',
-                defaultValue: 'GBP',
+                defaultValue: 'USD',
                 options: [
-                    { label: 'GBP (£)', value: 'GBP' },
                     { label: 'USD ($)', value: 'USD' },
                     { label: 'NGN (₦)', value: 'NGN' },
                 ],
@@ -118,24 +115,17 @@ export const Products: CollectionConfig = {
               required: true,
             },
             {
-              name: 'gains',
-              type: 'array',
-              label: 'What You Will Gain',
-              fields: [
-                {
-                  name: 'gain',
-                  type: 'text',
-                  required: true,
-                },
-              ],
+              name: 'pages',
+              type: 'number',
+              label: 'Number of Pages',
             },
             {
-              name: 'whoFor',
-              type: 'textarea',
-              label: 'Who This Is For',
+              name: 'format',
+              type: 'text',
+              label: 'Book Format',
+              defaultValue: 'PDF',
               required: true,
             },
-
             {
               name: 'buttonText',
               type: 'text',
@@ -143,36 +133,10 @@ export const Products: CollectionConfig = {
               required: true,
             },
             {
-              name: 'calendlyLink',
-              type: 'text',
-              label: 'Calendly Link',
-              admin: {
-                description: 'Optional. Override the global Calendly link for this specific product.',
-              },
-            },
-            {
-              name: 'duration',
-              type: 'text',
-              label: 'Duration',
-              defaultValue: 'Tailored',
-            },
-            {
-              name: 'location',
-              type: 'select',
-              label: 'Location',
-              defaultValue: 'Online',
-              options: [
-                    { label: 'Online', value: 'Online' },
-                    { label: 'In-Person', value: 'In-Person' },
-                    { label: 'Online / In-Person', value: 'Online / In-Person' },
-                ],  
-                required: true,
-            },
-            {
-              name: 'booking',
-              type: 'text',
-              label: 'Booking',
-              defaultValue: 'Flexible',
+              name: 'bookFile',
+              type: 'relationship',
+              relationTo: 'book-files',
+              label: 'Book PDF File',
             },
           ],
         },

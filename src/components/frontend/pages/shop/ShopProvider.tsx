@@ -1,7 +1,7 @@
 "use client";
 
 import { useEffect, useState, ReactNode } from "react";
-import { Product } from "@/constants";
+import { Product } from "@/payload-types";
 import { ShopContext, CartItem } from "./shopContext";
 
 const load = <T,>(key: string, fallback: T): T => {
@@ -50,10 +50,10 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
     });
   };
 
-  const removeFromCart = (id: string) =>
+  const removeFromCart = (id: number) =>
     setCart((prev) => prev.filter((i) => i.product.id !== id));
 
-  const updateQuantity = (id: string, quantity: number) =>
+  const updateQuantity = (id: number, quantity: number) =>
     setCart((prev) =>
       prev
         .map((i) => (i.product.id === id ? { ...i, quantity: Math.max(0, quantity) } : i))
@@ -69,7 +69,7 @@ export const ShopProvider = ({ children }: { children: ReactNode }) => {
         : [...prev, product]
     );
 
-  const isWishlisted = (id: string) => wishlist.some((p) => p.id === id);
+  const isWishlisted = (id: number) => wishlist.some((p) => p.id === id);
 
   const cartCount = cart.reduce((sum, i) => sum + i.quantity, 0);
   const cartSubtotal = cart.reduce((sum, i) => sum + i.product.price * i.quantity, 0);

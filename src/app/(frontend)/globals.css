@@ -1,7 +1,6 @@
 @import url('https://fonts.googleapis.com/css2?family=Montserrat:ital,wght@0,300;0,400;0,500;0,600;0,700;0,800;0,900;1,400&family=Oswald:wght@400;500;600;700&display=swap');
 
 @import 'tailwindcss';
-@plugin '@tailwindcss/typography';
 
 @theme {
   --font-heading: var(--font-oswald), Oswald, sans-serif;
@@ -171,25 +170,69 @@
   }
 }
 
-/* Fallback list styles for Payload CMS rich text lists */
+/* Styling for Payload CMS Lexical RichText elements */
+.payload-richtext p {
+  margin-top: 1rem;
+  margin-bottom: 1rem;
+  line-height: 1.75;
+}
+
+.payload-richtext h1,
+.payload-richtext h2,
+.payload-richtext h3,
+.payload-richtext h4,
+.payload-richtext h5,
+.payload-richtext h6 {
+  margin-top: 2rem;
+  margin-bottom: 1rem;
+  font-weight: 700;
+  line-height: 1.25;
+}
+
+.payload-richtext h1 { font-size: 2rem; }
+.payload-richtext h2 { font-size: 1.75rem; }
+.payload-richtext h3 { font-size: 1.5rem; }
+.payload-richtext h4 { font-size: 1.25rem; }
+
+.payload-richtext a {
+  color: var(--color-primary, hsl(var(--primary)));
+  text-decoration: underline;
+  font-weight: 500;
+  transition: color 0.2s ease;
+}
+
+.payload-richtext a:hover {
+  color: var(--color-accent, hsl(var(--accent)));
+}
+
+.payload-richtext blockquote {
+  border-left: 4px solid var(--color-accent, hsl(var(--accent)));
+  padding-left: 1.5rem;
+  font-style: italic;
+  margin: 1.5rem 0;
+  color: var(--color-foreground, hsl(var(--foreground)));
+  opacity: 0.8;
+}
+
 .payload-richtext ul,
 ul.payload-richtext__list--unordered {
   list-style-type: disc !important;
   padding-left: 1.5rem !important;
-  margin-top: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
 }
 
 .payload-richtext ol,
 ol.payload-richtext__list--ordered {
   list-style-type: decimal !important;
   padding-left: 1.5rem !important;
-  margin-top: 0.5rem !important;
-  margin-bottom: 0.5rem !important;
+  margin-top: 0.75rem !important;
+  margin-bottom: 0.75rem !important;
 }
 
 .payload-richtext li {
   list-style: inherit !important;
-  margin-top: 0.25rem !important;
-  margin-bottom: 0.25rem !important;
+  margin-top: 0.35rem !important;
+  margin-bottom: 0.35rem !important;
+  line-height: 1.625;
 }
